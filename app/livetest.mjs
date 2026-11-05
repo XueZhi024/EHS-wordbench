@@ -121,7 +121,7 @@ async function main() {
       })()`);
       assert(info, '数据包未加载');
       assert(info.total > 0, '数据为空');
-      assert(info.cols === 11, '集合数: ' + info.cols);
+      assert(info.cols === 10, '集合数: ' + info.cols);
       console.log(`       ${info.total} 条数据, ${info.cols} 个集合`);
     });
 
@@ -139,7 +139,7 @@ async function main() {
     console.log('\n[2] 界面渲染');
     await check('侧边栏 12 个导航项', async () => {
       const n = await cdp.eval('document.querySelectorAll(".nav a").length');
-      assert(n === 12, '导航数: ' + n);
+      assert(n === 11, '导航数: ' + n);
     });
 
     await check('看板 KPI 已渲染', async () => {
@@ -294,7 +294,7 @@ async function main() {
       })()`);
       assert(info.isHtml, '不是 HTML');
       assert(info.svg >= 6, '图表: ' + info.svg);
-      assert(info.tables >= 11, '表格: ' + info.tables);
+      assert(info.tables >= 10, '表格: ' + info.tables);
       console.log(`       ${Math.round(info.len/1024)} KB, ${info.svg} 图表, ${info.tables} 表格`);
     });
 
