@@ -1,0 +1,84 @@
+name: Deploy to GitHub Pages
+
+# 触发条件：推送到 main 分支，或手动触发
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 权限设置（GitHub Pages 部署必需）
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同时只允许一个部署任务，避免冲突
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------- 构建
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Prepare site
+        run: |
+          echo "=== 仓库结构 ==="
+          ls -la
+
+          echo ""
+          echo "=== 检查关键文件 ==="
+          if [ ! -f "web/index.html" ]; then
+            echo "错误：缺少 web/index.html"
+            exit 1
+          fi
+          if [ ! -f "web/app.js" ]; then
+            echo "错误：缺少 web/app.js"
+            exit 1
+          fi
+          if [ ! -f "web/data/bundle.js" ]; then
+            echo "警告：缺少数据包，将生成空数据"
+          fi
+
+          echo ""
+          echo "=== 创建部署目录 ==="
+          mkdir -p _site
+          cp -r web/* _site/
+
+          # 根目录的跳转页
+          cp index.html _site/../index_root.html 2>/dev/null || true
+
+          # 把 web 内容放到根目录，这样访问 / 就是应用
+          # （index.html 已包含在 web/ 里）
+          echo "已复制 web/ 到 _site/"
+
+          echo ""
+          echo "=== 部署内容 ==="
+          ls -la _site/
+          echo ""
+          echo "文件总数: $(find _site -type f | wc -l)"
+          echo "总大小: $(du -sh _site | cut -f1)"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+  # ---------------------------------------------------------------- 部署
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
