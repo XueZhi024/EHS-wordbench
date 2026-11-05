@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>安全管理数据工作台</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>安全管理数据工作台</h1>
+      <div class="ver" id="verText">本地版</div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sidebar-foot">
+      <div id="footStat">数据保存在本机</div>
+      <button id="btnDataInfo" title="查看数据存放位置与更新方式">数据位置</button>
+      <button id="btnBackup" title="打包下载全部数据">备份全部数据</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h2 id="pageTitle">综合看板</h2>
+      <span class="sub" id="pageSub"></span>
+      <div class="spacer"></div>
+      <span class="sub" id="healthText"></span>
+    </header>
+    <div class="content" id="content">
+      <div class="loading">正在加载…</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="modalRoot"></div>
+
+<script src="charts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
