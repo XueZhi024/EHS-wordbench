@@ -301,7 +301,7 @@
 
     nav.appendChild(el('div', { class: 'nav-group-title', text: '保障管理' }));
     ['equipments', 'trainings', 'certificates', 'fireEquipments', 'fireDrills',
-      'contractors', 'permits'].forEach(k => {
+      'permits'].forEach(k => {
       const c = collOf(k);
       nav.appendChild(navLink('#/' + k, c.icon, c.label, k));
     });
@@ -1175,7 +1175,6 @@
       { label: '证照到期预警', value: k.certWarn, foot: `已过期 ${k.certExpired} 张`, tone: k.certWarn > 0 ? 'danger' : 'ok' },
       { label: '消防点检逾期', value: k.fireOverdue, foot: `设施共 ${k.fireTotal} 项`, tone: k.fireOverdue > 0 ? 'warn' : 'ok' },
       { label: '应急演练', value: k.drillTotal, foot: '统计期内计划/实施', tone: '' },
-      { label: '承包商在册', value: k.contractorActive, foot: `违章合计 ${k.contractorViolations} 次`, tone: '' },
       { label: '设备总数', value: k.equipmentTotal, foot: `特种设备 ${k.equipmentSpecial} 台 · 在用 ${k.equipmentActive}`, tone: '' },
       { label: '设备检验到期', value: k.equipmentExpiring, foot: `已过期 ${k.equipmentExpired} 台`, tone: k.equipmentExpiring > 0 ? 'danger' : 'ok' },
       { label: '进行中作业票', value: k.permitRunning, foot: `临期/超期 ${k.permitExpiring} 张`, tone: k.permitExpiring > 0 ? 'warn' : '' },

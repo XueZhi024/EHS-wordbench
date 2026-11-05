@@ -116,14 +116,14 @@ async function main() {
         return { total: b.meta.total, collections: b.schema.collections.length };
       })()`);
       assert(info.total > 0, '数据为空');
-      assert(info.collections === 11, '集合数: ' + info.collections);
+      assert(info.collections === 10, '集合数: ' + info.collections);
       console.log(`       数据包: ${info.total} 条, ${info.collections} 个集合`);
     });
 
     console.log('\n[2] 页面渲染');
     await check('侧边栏渲染完整', async () => {
       const n = await cdp.eval('document.querySelectorAll(".nav a").length');
-      assert(n === 12, '导航项数: ' + n);
+      assert(n === 11, '导航项数: ' + n);
     });
 
     await check('看板 KPI 渲染', async () => {
@@ -467,7 +467,7 @@ async function main() {
       assert(info.hasTitle && info.hasKpi && info.hasCharts, '结构不全');
       assert(info.hasAlerts && info.hasTables, '缺少提醒或台账');
       assert(info.svgCount >= 6, '图表数: ' + info.svgCount);
-      assert(info.tableCount >= 11, '表格数: ' + info.tableCount);
+      assert(info.tableCount >= 10, '表格数: ' + info.tableCount);
       assert(info.noExternal, '存在外部资源依赖');
       console.log(`       ${Math.round(info.len/1024)} KB, ${info.svgCount} 图表, ${info.tableCount} 表格`);
     });

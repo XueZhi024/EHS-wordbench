@@ -31,7 +31,6 @@ const STATUS_FIELDS = {
   certificates: ['有效', '已注销'],
   fireEquipments: ['正常', '待维修', '已停用', '已报废'],
   fireDrills: ['计划中', '已实施', '已评估', '已关闭'],
-  contractors: ['已准入', '待审核', '已暂停', '已清退'],
   permits: ['待审批', '已批准', '作业中', '已完工', '已关闭', '已作废'],
   equipments: ['在用', '备用', '停用', '维修中', '已报废'],
 };
@@ -39,7 +38,7 @@ const STATUS_FIELDS = {
 const PREFIXES = {
   hazards: 'YH', risks: 'FX', concerns: 'AQ', incidents: 'SG',
   trainings: 'PX', certificates: 'ZZ', fireEquipments: 'XF',
-  fireDrills: 'YL', contractors: 'CBS', permits: 'ZY', equipments: 'SB',
+  fireDrills: 'YL', permits: 'ZY', equipments: 'SB',
 };
 
 // ============================================================ 读取 schema
@@ -332,21 +331,6 @@ function buildDemoData(schema) {
     ...base,
   }));
 
-  const contractors = [
-    ['华建工程有限公司', '工程施工', '刘经理', '13800138001', '91330100MA2XXXXX01', '建筑工程施工总承包二级', '已签订', '团体意外险 100 万/人', -120, 240, '已准入', 2, '良好'],
-    ['恒信设备检修有限公司', '设备检修', '陈工', '13800138002', '91330100MA2XXXXX02', '机电安装工程三级', '已签订', '团体意外险 80 万/人', -200, 25, '已准入', 0, '优秀'],
-    ['顺达物流有限公司', '运输物流', '王师傅', '13800138003', '91330100MA2XXXXX03', '道路运输经营许可证', '已签订', '承运人责任险 50 万', -300, 400, '已准入', 1, '合格'],
-    ['绿源保洁服务有限公司', '保洁绿化', '赵主管', '13800138004', '91330100MA2XXXXX04', '无特殊资质要求', '已签订', '雇主责任险 30 万/人', -90, 500, '已准入', 0, '良好'],
-    ['众诚劳务分包有限公司', '劳务分包', '孙经理', '13800138005', '91330100MA2XXXXX05', '劳务分包资质', '已签订', '团体意外险 60 万/人', -150, 15, '已准入', 3, '合格'],
-    ['金石机电安装有限公司', '设备安装', '周工', '13800138006', '91330100MA2XXXXX06', '机电安装工程二级', '未签订', '暂无', -10, 180, '待审核', 0, ''],
-    ['宏远建筑劳务有限公司', '劳务分包', '吴经理', '13800138007', '91330100MA2XXXXX07', '劳务分包资质', '已签订', '团体意外险 50 万/人', -400, -20, '已暂停', 5, '不合格'],
-  ].map((r, i) => ({
-    id: mk('CBS', Y, i + 1), name: r[0], type: r[1], contact: r[2], phone: r[3],
-    license: r[4], qualification: r[5], safetyAgreement: r[6], insurance: r[7],
-    entryDate: d(r[8]), expireDate: d(r[9]), status: r[10],
-    violationCount: r[11], lastEval: r[12], ...base,
-  }));
-
   const permits = [
     ['动火作业', '二级', '恒信设备检修有限公司', '陈工', '设备部', '二车间焊接区', -1, 8, 0, 17, 0, '管道补焊作业', '配备灭火器 2 具、监护人全程监护', '王振华', '陈志强', '已关闭'],
     ['受限空间作业', '一级', '华建工程有限公司', '刘经理', '安全环保部', '污水处理站调节池', 0, 9, 0, 16, 0, '调节池清淤', '气体检测、强制通风、正压式呼吸器', '孙丽', '陈志强', '作业中'],
@@ -416,7 +400,7 @@ function buildDemoData(schema) {
 
   return {
     hazards, risks, concerns, incidents, trainings, certificates,
-    fireEquipments, fireDrills, contractors, permits, equipments,
+    fireEquipments, fireDrills, permits, equipments,
   };
 }
 

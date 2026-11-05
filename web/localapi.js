@@ -337,13 +337,6 @@
       const s = parseDateTime(rec.startTime), e = parseDateTime(rec.endTime);
       if (s && e && e < s) errors.push('结束时间不能早于开始时间');
     }
-    if (key === 'contractors') {
-      if (rec.status === '已准入') {
-        if (rec.safetyAgreement === '未签订') errors.push('状态为「已准入」时安全协议必须已签订');
-        const e = D('expireDate');
-        if (e && e < parseDate(today())) errors.push('资质已过期，不能置为「已准入」');
-      }
-    }
     if (key === 'hazards') {
       if (rec.status === '已关闭' && rec.checkResult !== '通过') {
         errors.push('状态为「已关闭」时验收结果必须为「通过」');
@@ -629,7 +622,6 @@
     const trainings = allItems('trainings').filter(r => keep(r, 'trainDate'));
     const certs = allItems('certificates');
     const fires = allItems('fireEquipments');
-    const contractors = allItems('contractors');
     const permits = allItems('permits');
     const drills = allItems('fireDrills').filter(r => keep(r, 'planDate'));
     const concernsAll = allItems('concerns');
@@ -680,11 +672,6 @@
 
     // 消防
     const fireOverdue = fires.filter(r => r.checkOverdue);
-
-    // 承包商
-    const cbsActive = contractors.filter(r => r.status === '已准入').length;
-    const cbsViolations = contractors.reduce((s, r) => s + (Number(r.violationCount) || 0), 0);
-    const cbsExpiring = contractors.filter(r => ['30天内到期', '已过期'].indexOf(r.expiryWarn) >= 0);
 
     // 作业票
     const permitRunning = permits.filter(r => ['已批准', '作业中'].indexOf(r.status) >= 0).length;
@@ -793,8 +780,6 @@
         fireOverdue: fireOverdue.length,
         fireTotal: fires.length,
         drillTotal: drills.length,
-        contractorActive: cbsActive,
-        contractorViolations: Math.round(cbsViolations),
         permitRunning: permitRunning,
         permitExpiring: permitExpiring.length,
         equipmentTotal: equips.length,
@@ -845,7 +830,6 @@
         certExpiring: certWarn.sort((a, b) => (a.daysLeft || 0) - (b.daysLeft || 0)).slice(0, 20)
           .map(r => brief(r, ['personName', 'certType', 'expireDate', 'daysLeft'])),
         fireOverdue: fireOverdue.slice(0, 20).map(r => brief(r, ['name', 'location', 'nextCheckDate'])),
-        contractorExpiring: cbsExpiring.slice(0, 20).map(r => brief(r, ['name', 'expireDate', 'expiryWarn'])),
         permitExpiring: permitExpiring.slice(0, 20).map(r => brief(r, ['id', 'type', 'contractor', 'endTime', 'state'])),
         equipmentExpiring: eqExpiring
           .sort((a, b) => String(a.inspectExpire || '').localeCompare(String(b.inspectExpire || '')))

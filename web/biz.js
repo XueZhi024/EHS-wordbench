@@ -557,7 +557,6 @@ footer{text-align:center;color:#8a99a8;font-size:12px;margin-top:34px;
       ['证照到期预警', k.certWarn, '', `已过期 ${k.certExpired} 张`, k.certWarn ? 'danger' : 'ok'],
       ['消防点检逾期', k.fireOverdue, '', `设施共 ${k.fireTotal} 项`, k.fireOverdue ? 'warn' : 'ok'],
       ['应急演练', k.drillTotal, '', '统计期内计划/实施', ''],
-      ['承包商在册', k.contractorActive, '', `违章合计 ${k.contractorViolations} 次`, ''],
       ['设备总数', k.equipmentTotal, '', `特种设备 ${k.equipmentSpecial} 台 · 在用 ${k.equipmentActive}`, ''],
       ['设备检验到期', k.equipmentExpiring, '', `已过期 ${k.equipmentExpired} 台`, k.equipmentExpiring ? 'danger' : 'ok'],
       ['进行中作业票', k.permitRunning, '', `临期/超期 ${k.permitExpiring} 张`, k.permitExpiring ? 'warn' : ''],
@@ -612,8 +611,6 @@ footer{text-align:center;color:#8a99a8;font-size:12px;margin-top:34px;
         a => a.name, a => `${a.location || ''} · 应检 ${a.nextCheckDate || '—'}`],
       ['设备检验到期', alerts.equipmentExpiring,
         a => `${a.name}（${a.type}）`, a => `${a.location} · ${a.inspectExpire} · ${a.expiryWarn}`],
-      ['承包商资质到期', alerts.contractorExpiring,
-        a => a.name, a => `${a.expireDate} · ${a.expiryWarn}`],
       ['作业票临期/超期', alerts.permitExpiring,
         a => `${a.type} ${a.contractor}`, a => `${a.endTime} · ${a.state}`],
     ];
