@@ -13,6 +13,11 @@ data/**/*.tmp
 # 保留目录结构（空目录占位文件可提交）
 !data/.gitkeep
 
+# ---------- 静态版数据包 ----------
+# web/data/bundle.js 需要提交（GitHub Pages 靠它提供初始数据）
+# 但生成它时要注意数据敏感性：公开仓库请用 --demo 生成演示数据
+!web/data/bundle.js
+
 # ---------- 生成的报表 ----------
 reports/
 *.xlsx

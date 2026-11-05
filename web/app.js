@@ -92,8 +92,16 @@
     return digits === undefined ? String(n) : n.toFixed(digits);
   }
 
+  // ============================================================ 运行模式
+  // 'server' = 有 Python 后端（本地运行）
+  // 'static' = 纯前端（GitHub Pages）
+  let RUN_MODE = 'server';
+
   // ============================================================ API
   async function api(path, opts) {
+    if (RUN_MODE === 'static') {
+      return staticApi(path, opts);
+    }
     const o = opts || {};
     const init = { method: o.method || 'GET', headers: {} };
     if (o.body !== undefined) {
@@ -111,6 +119,84 @@
       throw new Error(data.error || ('请求失败（' + resp.status + '）'));
     }
     return data.data;
+  }
+
+  // 静态模式的 API 路由（映射到 LocalAPI）
+  function staticApi(path, opts) {
+    const o = opts || {};
+    const method = (o.method || 'GET').toUpperCase();
+    const L = window.LocalAPI;
+    if (!L) throw new Error('本地数据层未加载');
+
+    const u = new URL(path, 'http://x');
+    const parts = u.pathname.replace(/^\/api\//, '').split('/').filter(Boolean);
+    const qs = {};
+    u.searchParams.forEach((v, k) => { qs[k] = v; });
+
+    const head = parts[0];
+
+    if (head === 'session') {
+      return Promise.resolve({
+        local: true, readonly: false, lan: false,
+        needLogin: false, loggedIn: true, client: 'local', mode: 'static',
+      });
+    }
+
+    if (head === 'health') {
+      const meta = L.getMeta();
+      return Promise.resolve({
+        version: '2.0.0-static',
+        counts: meta.counts,
+        dataDir: '浏览器本地存储',
+        mode: { local: true, readonly: false, lan: false, mode: 'static' },
+      });
+    }
+
+    if (head === 'schema') return Promise.resolve(L.getSchema());
+    if (head === 'dicts') {
+      const sch = L.getSchema();
+      return Promise.resolve(sch.dicts || {});
+    }
+    if (head === 'dashboard') {
+      return Promise.resolve(L.dashboard(qs.from || '', qs.to || '', qs.dept || ''));
+    }
+    if (head === 'backup') {
+      const dump = L.exportAll();
+      const blob = new Blob([JSON.stringify(dump, null, 2)],
+        { type: 'application/json' });
+      return Promise.resolve(blob);
+    }
+
+    // 集合操作
+    const key = head;
+    if (!L.getSchema().collections.some(c => c.key === key)) {
+      throw new Error('未知集合：' + key);
+    }
+    const rest = parts.slice(1);
+
+    if (!rest.length) {
+      if (method === 'GET') return Promise.resolve(L.list(key, qs));
+      if (method === 'POST') return Promise.resolve(L.create(key, o.body || {}));
+    }
+
+    const id = rest[0];
+    if (rest[1] === 'transition' && method === 'POST') {
+      const body = o.body || {};
+      return Promise.resolve(L.transition(key, id, body.action || '', body.extra || {}));
+    }
+
+    if (method === 'GET') {
+      const rec = L.get(key, id);
+      if (!rec) throw new Error('记录不存在');
+      return Promise.resolve(rec);
+    }
+    if (method === 'PUT') return Promise.resolve(L.update(key, id, o.body || {}));
+    if (method === 'DELETE') {
+      const ok = L.remove(key, id);
+      if (!ok) throw new Error('记录不存在');
+      return Promise.resolve({ deleted: id });
+    }
+    throw new Error('不支持的操作');
   }
 
   async function download(path, fallbackName) {
@@ -675,6 +761,11 @@
           } else {
             const created = await api(`/api/${key}`, { method: 'POST', body: payload });
             toast('已新增：' + created.id, 'ok');
+            // 回到第 1 页并清空搜索，让新记录可见
+            S.list.page = 1;
+            S.list.q = '';
+            const searchBox = document.querySelector('.toolbar input[type=search]');
+            if (searchBox) searchBox.value = '';
           }
           closeModal();
           refresh();
@@ -1243,6 +1334,9 @@
   async function boot() {
     checkZoom();
 
+    // 检测运行环境：有 Python 后端就用后端，否则用纯前端模式
+    await detectMode();
+
     // 先取访问模式，决定是否显示只读提示、是否需要登录
     try {
       S.mode = await api('/api/session');
@@ -1262,13 +1356,16 @@
       $('#content').innerHTML = '';
       $('#content').appendChild(el('div', {
         class: 'empty',
-        text: '无法连接本地服务：' + e.message + '　请确认「启动工作台.bat」窗口仍在运行。',
+        text: RUN_MODE === 'static'
+          ? '无法加载数据：' + e.message
+          : '无法连接本地服务：' + e.message + '　请确认「启动工作台.bat」窗口仍在运行。',
       }));
       return;
     }
     buildNav();
     await loadCounts();
     applyModeUI();
+    applyStaticUI();
 
     $('#btnBackup').addEventListener('click', async () => {
       try {
@@ -1286,6 +1383,187 @@
     window.addEventListener('resize', debounce(() => {
       if (S.route.view === 'dashboard') renderDashboard();
     }, 260));
+  }
+
+  // 检测运行环境：尝试连后端，失败则用纯前端模式
+  async function detectMode() {
+    // 优先用 bundle 是否存在来判断（GitHub Pages 上只有静态文件）
+    const hasBundle = !!window.__EHS_BUNDLE__;
+    const hasLocalAPI = !!window.LocalAPI;
+
+    if (hasBundle && hasLocalAPI) {
+      // 有 bundle 时再确认后端是否真的在跑（本地开发时两者都有）
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 1200);
+        const resp = await fetch('/api/health', { signal: ctrl.signal });
+        clearTimeout(timer);
+        if (resp.ok) {
+          const j = await resp.json();
+          if (j && j.ok) {
+            RUN_MODE = 'server';
+            return;
+          }
+        }
+      } catch (e) {
+        // 后端不可用
+      }
+      RUN_MODE = 'static';
+      window.LocalAPI.init();
+      return;
+    }
+
+    if (hasLocalAPI) {
+      RUN_MODE = 'static';
+      window.LocalAPI.init();
+      return;
+    }
+    RUN_MODE = 'server';
+  }
+
+  // 静态模式下的界面调整
+  function applyStaticUI() {
+    if (RUN_MODE !== 'static') return;
+
+    // 侧栏底部加「数据管理」入口
+    const foot = $('.sidebar-foot');
+    if (foot && !$('#btnStaticData')) {
+      const btn = el('button', {
+        id: 'btnStaticData',
+        title: '导出/导入数据，或恢复演示数据',
+        text: '数据管理',
+        style: 'margin-top:6px',
+        onclick: showStaticDataPanel,
+      });
+      foot.appendChild(btn);
+    }
+
+    // 顶栏显示「本地存储」标记
+    const sub = $('#pageSub');
+    if (sub && !sub.textContent.includes('本地存储')) {
+      sub.textContent = sub.textContent + '　·　数据存于本浏览器';
+    }
+  }
+
+  // 静态模式的数据管理面板
+  function showStaticDataPanel() {
+    const L = window.LocalAPI;
+    const meta = L.getMeta();
+    const total = meta.total;
+    const bundleTotal = (meta.bundleMeta && meta.bundleMeta.total) || 0;
+
+    const body = el('div', { class: 'modal-body' });
+    body.innerHTML = `
+      <div style="background:#f6f9fb;border:1px solid #e2e8ee;border-radius:8px;
+                  padding:12px 14px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px">当前数据</div>
+        <div style="font-size:12.5px;color:#5a6b7b;line-height:1.9">
+          浏览器本地存储：<b style="color:#1a2733">${total}</b> 条记录<br>
+          初始数据包：<b>${bundleTotal}</b> 条（${esc((meta.bundleMeta && meta.bundleMeta.generatedAt) || '未知')}）<br>
+          存储位置：<code>localStorage</code>（本浏览器，换设备不同步）
+        </div>
+      </div>
+
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">数据操作</div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <button class="btn" id="btnExportJson" style="text-align:left;padding:11px 14px">
+          <b>导出全部数据（JSON）</b><br>
+          <span style="font-size:12px;color:#8a99a8">备份当前数据，可导入到其他浏览器</span>
+        </button>
+        <button class="btn" id="btnImportJson" style="text-align:left;padding:11px 14px">
+          <b>导入数据（JSON）</b><br>
+          <span style="font-size:12px;color:#8a99a8">用备份文件覆盖当前数据</span>
+        </button>
+        <button class="btn" id="btnResetBundle" style="text-align:left;padding:11px 14px">
+          <b>恢复初始数据</b><br>
+          <span style="font-size:12px;color:#8a99a8">丢弃所有修改，回到 ${bundleTotal} 条初始数据</span>
+        </button>
+        <button class="btn danger" id="btnClearAll" style="text-align:left;padding:11px 14px">
+          <b>清空所有数据</b><br>
+          <span style="font-size:12px;color:#8a99a8">删除全部记录，谨慎操作</span>
+        </button>
+      </div>
+
+      <div style="margin-top:16px;background:#fdf8e1;border:1px solid #f7dc6f;
+                  border-radius:7px;padding:10px 13px;font-size:12.5px;color:#7d6608">
+        <b>说明</b>：网页版数据存在你自己的浏览器里。清除浏览器数据会丢失记录，
+        建议定期用「导出全部数据」备份。
+      </div>
+    `;
+
+    showModal(el('div', { class: 'modal', style: 'width:min(560px,100%)' }, [
+      el('div', { class: 'modal-head' }, [
+        el('h3', { text: '数据管理' }),
+        el('button', { class: 'x', text: '×', onclick: closeModal }),
+      ]),
+      body,
+      el('div', { class: 'modal-foot' }, [
+        el('span', { class: 'hint', text: '数据仅保存在本浏览器' }),
+        el('button', { class: 'btn primary', text: '关闭', onclick: closeModal }),
+      ]),
+    ]));
+
+    // 导出 JSON
+    const be = document.getElementById('btnExportJson');
+    if (be) be.addEventListener('click', () => {
+      const dump = L.exportAll();
+      const blob = new Blob([JSON.stringify(dump, null, 2)],
+        { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = el('a', { href: url, download: `EHS数据备份_${todayStr()}.json` });
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast('已导出数据文件', 'ok');
+    });
+
+    // 导入 JSON
+    const bi = document.getElementById('btnImportJson');
+    if (bi) bi.addEventListener('click', () => {
+      const input = el('input', { type: 'file', accept: '.json' });
+      input.addEventListener('change', async () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const obj = JSON.parse(text);
+          if (!confirm('导入将覆盖当前全部数据，确定继续？')) return;
+          const n = L.importAll(obj);
+          toast(`已导入 ${n} 条记录`, 'ok');
+          closeModal();
+          refresh();
+        } catch (e) {
+          toast('导入失败：' + e.message, 'err');
+        }
+      });
+      input.click();
+    });
+
+    // 恢复初始数据
+    const br = document.getElementById('btnResetBundle');
+    if (br) br.addEventListener('click', () => {
+      if (!confirm(`将丢弃所有修改，恢复到 ${bundleTotal} 条初始数据。\n确定继续？`)) return;
+      try {
+        const n = L.resetToBundle();
+        toast(`已恢复 ${n} 条初始数据`, 'ok');
+        closeModal();
+        refresh();
+      } catch (e) {
+        toast('恢复失败：' + e.message, 'err');
+      }
+    });
+
+    // 清空
+    const bc = document.getElementById('btnClearAll');
+    if (bc) bc.addEventListener('click', () => {
+      if (!confirm('将删除全部记录，且无法撤销。\n确定清空？')) return;
+      if (!confirm('再次确认：真的要清空所有数据吗？')) return;
+      L.clearAll();
+      toast('已清空全部数据', 'ok');
+      closeModal();
+      refresh();
+    });
   }
 
   // 数据位置与更新方式说明
