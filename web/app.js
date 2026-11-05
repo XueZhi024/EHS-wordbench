@@ -479,8 +479,7 @@
     if (!S.mode.readonly) {
       toolbar.appendChild(el('button', {
         class: 'btn', text: '下载模板',
-        onclick: () => download(`/api/${key}/template.xlsx`, coll.label + '_导入模板.xlsx')
-          .catch(e => toast(e.message, 'err')),
+        onclick: () => doTemplate(key),
       }));
     }
     if (S.mode.readonly) {
@@ -962,11 +961,33 @@
   async function doExport(key) {
     const coll = collOf(key);
     try {
+      if (RUN_MODE === 'static') {
+        // 纯前端：取当前筛选的全部记录，本地生成 xlsx
+        const qs = { q: S.list.q, sort: S.list.sort, dir: S.list.dir, size: 100000, page: 1 };
+        Object.keys(S.list.filters).forEach(k => { qs[k] = S.list.filters[k]; });
+        const res = await api(`/api/${key}?` + new URLSearchParams(qs).toString());
+        Biz.exportCollection(key, res.items, coll);
+        toast(`已导出 ${res.items.length} 条`, 'ok');
+        return;
+      }
       const qs = new URLSearchParams({ q: S.list.q, sort: S.list.sort, dir: S.list.dir });
       Object.keys(S.list.filters).forEach(k => qs.set(k, S.list.filters[k]));
       await download(`/api/${key}/export.xlsx?` + qs.toString(),
         coll.label + '_' + todayStr().replace(/-/g, '') + '.xlsx');
       toast('已导出', 'ok');
+    } catch (e) { toast(e.message, 'err'); }
+  }
+
+  // 下载模板（两种模式统一入口）
+  async function doTemplate(key) {
+    const coll = collOf(key);
+    try {
+      if (RUN_MODE === 'static') {
+        Biz.exportTemplate(key, coll);
+        toast('模板已下载', 'ok');
+        return;
+      }
+      await download(`/api/${key}/template.xlsx`, coll.label + '_导入模板.xlsx');
     } catch (e) { toast(e.message, 'err'); }
   }
 
@@ -982,14 +1003,20 @@
         btn.disabled = true;
         resultBox.innerHTML = '正在导入…';
         try {
-          const buf = await file.arrayBuffer();
-          const resp = await fetch(`/api/${key}/import`, {
-            method: 'POST', body: buf,
-            headers: { 'X-Filename': encodeURIComponent(file.name) },
-          });
-          const data = await resp.json();
-          if (!resp.ok || data.ok === false) throw new Error(data.error || '导入失败');
-          const r = data.data;
+          let r;
+          if (RUN_MODE === 'static') {
+            // 纯前端：本地解析 xlsx
+            r = await Biz.importCollection(file, key, coll, window.LocalAPI);
+          } else {
+            const buf = await file.arrayBuffer();
+            const resp = await fetch(`/api/${key}/import`, {
+              method: 'POST', body: buf,
+              headers: { 'X-Filename': encodeURIComponent(file.name) },
+            });
+            const data = await resp.json();
+            if (!resp.ok || data.ok === false) throw new Error(data.error || '导入失败');
+            r = data.data;
+          }
           resultBox.innerHTML = '';
           resultBox.appendChild(el('div', {
             style: 'color:#1e8449;font-weight:600',
@@ -1026,8 +1053,7 @@
       el('div', { class: 'modal-foot' }, [
         el('button', {
           class: 'btn', text: '下载模板',
-          onclick: () => download(`/api/${key}/template.xlsx`, coll.label + '_导入模板.xlsx')
-            .catch(e => toast(e.message, 'err')),
+          onclick: () => doTemplate(key),
         }),
         el('div', { style: 'flex:1' }),
         el('button', { class: 'btn', text: '关闭', onclick: closeModal }),
@@ -1091,6 +1117,17 @@
           title: '生成包含全部图表的完整报表，可离线查看或打印为 PDF',
           onclick: async () => {
             try {
+              if (RUN_MODE === 'static') {
+                // 纯前端：本地生成报表
+                const qs = S.dashQuery || '';
+                const params = new URLSearchParams(qs.replace(/^\?/, ''));
+                const d = await api('/api/dashboard?' + params.toString());
+                const html = Biz.buildReport(d, S.schema, k => window.LocalAPI.all(k));
+                Biz.downloadReport(html,
+                  '安全管理数据报表_' + todayStr().replace(/-/g, '') + '.html');
+                toast('报表已下载，双击即可打开', 'ok');
+                return;
+              }
               const qs = S.dashQuery || '';
               await download('/api/report.html' + qs,
                 '安全管理数据报表_' + todayStr().replace(/-/g, '') + '.html');
@@ -1369,12 +1406,35 @@
 
     $('#btnBackup').addEventListener('click', async () => {
       try {
+        if (RUN_MODE === 'static') {
+          // 纯前端：导出 JSON
+          const dump = window.LocalAPI.exportAll();
+          const blob = new Blob([JSON.stringify(dump, null, 2)],
+            { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = el('a', { href: url, download: `EHS数据备份_${todayStr()}.json` });
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 4000);
+          toast('已导出数据备份', 'ok');
+          return;
+        }
         await download('/api/backup', 'safety-data-' + todayStr() + '.zip');
         toast('已打包下载全部数据', 'ok');
       } catch (e) { toast(e.message, 'err'); }
     });
 
-    $('#btnDataInfo').addEventListener('click', showDataInfo);
+    // 「数据位置」按钮：静态模式下改为数据管理
+    const btnInfo = $('#btnDataInfo');
+    if (btnInfo) {
+      if (RUN_MODE === 'static') {
+        btnInfo.textContent = '数据管理';
+        btnInfo.addEventListener('click', showStaticDataPanel);
+      } else {
+        btnInfo.addEventListener('click', showDataInfo);
+      }
+    }
 
     window.addEventListener('hashchange', route);
     if (!location.hash) location.hash = '#/dashboard';
@@ -1425,24 +1485,15 @@
   function applyStaticUI() {
     if (RUN_MODE !== 'static') return;
 
-    // 侧栏底部加「数据管理」入口
-    const foot = $('.sidebar-foot');
-    if (foot && !$('#btnStaticData')) {
-      const btn = el('button', {
-        id: 'btnStaticData',
-        title: '导出/导入数据，或恢复演示数据',
-        text: '数据管理',
-        style: 'margin-top:6px',
-        onclick: showStaticDataPanel,
-      });
-      foot.appendChild(btn);
-    }
-
     // 顶栏显示「本地存储」标记
     const sub = $('#pageSub');
     if (sub && !sub.textContent.includes('本地存储')) {
       sub.textContent = sub.textContent + '　·　数据存于本浏览器';
     }
+
+    // 隐藏「备份全部数据」（静态模式下用「数据管理」里的导出）
+    const btnBackup = $('#btnBackup');
+    if (btnBackup) btnBackup.style.display = 'none';
   }
 
   // 静态模式的数据管理面板

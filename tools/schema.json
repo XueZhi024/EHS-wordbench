@@ -1,0 +1,3594 @@
+{
+ "collections": [
+  {
+   "key": "hazards",
+   "label": "隐患排查治理",
+   "short": "隐患",
+   "prefix": "YH",
+   "icon": "⚠",
+   "desc": "排查发现 → 登记 → 整改 → 验收 → 关闭",
+   "statusField": "status",
+   "defaultStatus": "待整改",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "title",
+     "label": "隐患描述",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 240,
+     "help": "一句话说清问题，如「三车间东侧配电箱门锁损坏」",
+     "form": true
+    },
+    {
+     "key": "category",
+     "label": "隐患类别",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "设备设施",
+      "作业行为",
+      "消防安全",
+      "电气安全",
+      "危化品",
+      "职业健康",
+      "环境管理",
+      "管理缺陷",
+      "其他"
+     ]
+    },
+    {
+     "key": "level",
+     "label": "隐患等级",
+     "type": "select",
+     "required": true,
+     "default": "一般隐患",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "一般隐患",
+      "重大隐患"
+     ]
+    },
+    {
+     "key": "source",
+     "label": "发现来源",
+     "type": "select",
+     "required": true,
+     "default": "日常巡检",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "日常巡检",
+      "专项检查",
+      "节前检查",
+      "上级检查",
+      "第三方检查",
+      "员工举报",
+      "班组自查"
+     ]
+    },
+    {
+     "key": "foundDate",
+     "label": "发现日期",
+     "type": "date",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "foundBy",
+     "label": "发现人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "dept",
+     "label": "责任部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "location",
+     "label": "所在位置",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "厂区 / 车间 / 具体位置",
+     "form": true
+    },
+    {
+     "key": "description",
+     "label": "详细描述",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "现场情况、可能造成的后果",
+     "form": true
+    },
+    {
+     "key": "measure",
+     "label": "整改措施",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "responsible",
+     "label": "整改责任人",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "deadline",
+     "label": "整改期限",
+     "type": "date",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "status",
+     "label": "状态",
+     "type": "select",
+     "required": true,
+     "default": "待整改",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true,
+     "options": [
+      "待整改",
+      "整改中",
+      "待验收",
+      "已关闭"
+     ]
+    },
+    {
+     "key": "overdue",
+     "label": "逾期",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 70,
+     "help": "",
+     "form": false,
+     "compute": "hazard_overdue"
+    },
+    {
+     "key": "rectifyDate",
+     "label": "整改完成日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "rectifyNote",
+     "label": "整改情况说明",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "cost",
+     "label": "整改投入(元)",
+     "type": "number",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "checkDate",
+     "label": "验收日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "checkBy",
+     "label": "验收人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "checkResult",
+     "label": "验收结果",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true,
+     "options": [
+      "",
+      "通过",
+      "不通过"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "开始整改",
+     "from": [
+      "待整改"
+     ],
+     "to": "整改中"
+    },
+    {
+     "action": "提交验收",
+     "from": [
+      "整改中"
+     ],
+     "to": "待验收",
+     "requires": [
+      "rectifyDate"
+     ]
+    },
+    {
+     "action": "验收通过",
+     "from": [
+      "待验收"
+     ],
+     "to": "已关闭",
+     "requires": [
+      "checkDate",
+      "checkBy"
+     ],
+     "set": {
+      "checkResult": "通过"
+     }
+    },
+    {
+     "action": "验收不通过",
+     "from": [
+      "待验收"
+     ],
+     "to": "整改中",
+     "requires": [
+      "checkBy"
+     ],
+     "set": {
+      "checkResult": "不通过",
+      "checkDate": ""
+     }
+    },
+    {
+     "action": "撤销关闭",
+     "from": [
+      "已关闭"
+     ],
+     "to": "待验收"
+    }
+   ]
+  },
+  {
+   "key": "risks",
+   "label": "风险分级管控",
+   "short": "风险",
+   "prefix": "FX",
+   "icon": "◈",
+   "desc": "风险点辨识、四色分级、管控措施与检查频次",
+   "statusField": "status",
+   "defaultStatus": "受控",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "riskPoint",
+     "label": "风险点名称",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "location",
+     "label": "所在区域",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "activity",
+     "label": "作业活动/设备",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 160,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "hazardFactor",
+     "label": "危险有害因素",
+     "type": "textarea",
+     "required": true,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "可能造成伤害的能量或物质",
+     "form": true
+    },
+    {
+     "key": "accidentType",
+     "label": "可能导致的事故",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true,
+     "options": [
+      "物体打击",
+      "车辆伤害",
+      "机械伤害",
+      "起重伤害",
+      "触电",
+      "淹溺",
+      "灼烫",
+      "火灾",
+      "高处坠落",
+      "坍塌",
+      "中毒和窒息",
+      "容器爆炸",
+      "其他伤害"
+     ]
+    },
+    {
+     "key": "likelihood",
+     "label": "可能性 L",
+     "type": "number",
+     "required": true,
+     "default": 3,
+     "in_list": true,
+     "width": 90,
+     "help": "1–5 整数，越大越可能发生",
+     "form": true
+    },
+    {
+     "key": "severity",
+     "label": "严重性 S",
+     "type": "number",
+     "required": true,
+     "default": 3,
+     "in_list": true,
+     "width": 90,
+     "help": "1–5 整数，越大后果越严重",
+     "form": true
+    },
+    {
+     "key": "riskScore",
+     "label": "风险值 R",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 80,
+     "help": "R = L × S，系统自动计算",
+     "form": false,
+     "compute": "risk_score"
+    },
+    {
+     "key": "riskLevel",
+     "label": "风险等级",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": false,
+     "compute": "risk_level"
+    },
+    {
+     "key": "controlMeasures",
+     "label": "管控措施",
+     "type": "textarea",
+     "required": true,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "技术 / 管理 / 培训 / 个体防护 / 应急",
+     "form": true
+    },
+    {
+     "key": "controlLevel",
+     "label": "管控层级",
+     "type": "select",
+     "required": true,
+     "default": "班组级",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "公司级",
+      "部门级",
+      "班组级",
+      "岗位级"
+     ]
+    },
+    {
+     "key": "dept",
+     "label": "责任部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "responsible",
+     "label": "责任人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "checkFreq",
+     "label": "检查频次",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "每班",
+      "每日",
+      "每周",
+      "每月",
+      "每季",
+      "每半年",
+      "每年"
+     ]
+    },
+    {
+     "key": "lastCheckDate",
+     "label": "最近检查日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "status",
+     "label": "受控状态",
+     "type": "select",
+     "required": true,
+     "default": "受控",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true,
+     "options": [
+      "受控",
+      "失控",
+      "整改中",
+      "已消除"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": []
+  },
+  {
+   "key": "concerns",
+   "label": "安全疑虑",
+   "short": "疑虑",
+   "prefix": "AQ",
+   "icon": "💬",
+   "desc": "员工反映的安全顾虑：登记 → 核实 → 答复 → 转隐患或关闭",
+   "statusField": "status",
+   "defaultStatus": "待核实",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "title",
+     "label": "疑虑内容",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 240,
+     "help": "一句话说清顾虑，如「三车间东侧地面油污容易滑倒」",
+     "form": true
+    },
+    {
+     "key": "status",
+     "label": "处理状态",
+     "type": "select",
+     "required": true,
+     "default": "待核实",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "待核实",
+      "核实中",
+      "待答复",
+      "已关闭",
+      "已转隐患"
+     ]
+    },
+    {
+     "key": "overdue",
+     "label": "超期",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 76,
+     "help": "",
+     "form": false,
+     "compute": "concern_overdue"
+    },
+    {
+     "key": "replyState",
+     "label": "反馈",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 88,
+     "help": "",
+     "form": false,
+     "compute": "concern_reply_state"
+    },
+    {
+     "key": "severity",
+     "label": "初步判断",
+     "type": "select",
+     "required": false,
+     "default": "中",
+     "in_list": true,
+     "width": 90,
+     "help": "登记时的初步风险判断，核实后可调整",
+     "form": true,
+     "options": [
+      "低",
+      "中",
+      "高"
+     ]
+    },
+    {
+     "key": "category",
+     "label": "疑虑类别",
+     "type": "select",
+     "required": true,
+     "default": "作业环境",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "设备设施",
+      "作业行为",
+      "消防安全",
+      "电气安全",
+      "危化品",
+      "职业健康",
+      "环境管理",
+      "作业环境",
+      "管理缺陷",
+      "其他"
+     ]
+    },
+    {
+     "key": "dept",
+     "label": "所属部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "deadline",
+     "label": "处理时限",
+     "type": "date",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 104,
+     "help": "承诺给反映人的答复期限，超期会标红",
+     "form": true
+    },
+    {
+     "key": "daysLeft",
+     "label": "剩余",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 80,
+     "help": "",
+     "form": false,
+     "compute": "concern_days_left"
+    },
+    {
+     "key": "source",
+     "label": "反映渠道",
+     "type": "select",
+     "required": true,
+     "default": "现场反映",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "现场反映",
+      "班前会",
+      "意见箱",
+      "微信/电话",
+      "工会",
+      "安全员巡查",
+      "举报",
+      "其他"
+     ]
+    },
+    {
+     "key": "reporter",
+     "label": "反映人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "可留空表示匿名反映",
+     "form": true
+    },
+    {
+     "key": "reporterType",
+     "label": "反映人类型",
+     "type": "select",
+     "required": false,
+     "default": "本厂员工",
+     "in_list": false,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "本厂员工",
+      "班组长",
+      "承包商人员",
+      "访客",
+      "匿名"
+     ]
+    },
+    {
+     "key": "location",
+     "label": "涉及位置",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 140,
+     "help": "厂区 / 车间 / 具体位置",
+     "form": true
+    },
+    {
+     "key": "foundDate",
+     "label": "反映日期",
+     "type": "date",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 104,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "description",
+     "label": "详细描述",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "把顾虑说清楚，便于核实",
+     "form": true
+    },
+    {
+     "key": "verifyDate",
+     "label": "核实日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 104,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "verifier",
+     "label": "核实人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 88,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "conclusion",
+     "label": "核实结论",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "是否属实、可能后果",
+     "form": true
+    },
+    {
+     "key": "replyDate",
+     "label": "答复日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 104,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "replyContent",
+     "label": "答复内容",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "向反映人反馈的处理意见",
+     "form": true
+    },
+    {
+     "key": "handle",
+     "label": "处理措施",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "hazardId",
+     "label": "转隐患编号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "转隐患后填写生成的隐患编号，便于追溯",
+     "form": true
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "开始核实",
+     "from": [
+      "待核实"
+     ],
+     "to": "核实中"
+    },
+    {
+     "action": "转隐患",
+     "from": [
+      "待核实",
+      "核实中"
+     ],
+     "to": "已转隐患",
+     "requires": [
+      "conclusion",
+      "hazardId"
+     ],
+     "help_": "确认成立后，请到「隐患排查治理」新建隐患，再把编号填到这里"
+    },
+    {
+     "action": "答复并关闭",
+     "from": [
+      "待核实",
+      "核实中",
+      "待答复"
+     ],
+     "to": "已关闭",
+     "requires": [
+      "replyDate",
+      "replyContent"
+     ]
+    },
+    {
+     "action": "退回待核实",
+     "from": [
+      "核实中",
+      "待答复"
+     ],
+     "to": "待核实"
+    },
+    {
+     "action": "重新打开",
+     "from": [
+      "已关闭",
+      "已转隐患"
+     ],
+     "to": "待核实"
+    }
+   ]
+  },
+  {
+   "key": "incidents",
+   "label": "事故事件管理",
+   "short": "事故",
+   "prefix": "SG",
+   "icon": "✖",
+   "desc": "事故与未遂事件登记、原因分析、结案统计",
+   "statusField": "status",
+   "defaultStatus": "调查中",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "title",
+     "label": "事件名称",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 220,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "level1",
+     "label": "事件大类",
+     "type": "select",
+     "required": true,
+     "default": "未遂事件",
+     "in_list": true,
+     "width": 120,
+     "help": "按公司《事件等级划分标准》分类",
+     "form": true,
+     "options": [
+      "安全疑虑",
+      "未遂事件",
+      "一般事件",
+      "急救箱事件",
+      "医疗处置事件",
+      "一般事故"
+     ]
+    },
+    {
+     "key": "grade",
+     "label": "细分等级",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "急救箱/医疗处置/一般事故需细分为 A/B/C 级",
+     "form": true,
+     "options": [
+      "",
+      "A级",
+      "B级",
+      "C级"
+     ],
+     "showWhen": {
+      "key": "level1",
+      "in": [
+       "急救箱事件",
+       "医疗处置事件",
+       "一般事故"
+      ]
+     }
+    },
+    {
+     "key": "levelDesc",
+     "label": "等级说明",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 170,
+     "help": "",
+     "form": false,
+     "compute": "incident_level_desc"
+    },
+    {
+     "key": "type",
+     "label": "事件类型",
+     "type": "select",
+     "required": true,
+     "default": "人身伤害",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "人身伤害",
+      "火灾爆炸",
+      "设备事故",
+      "交通事故",
+      "环境污染",
+      "职业病",
+      "未遂事件",
+      "险兆事件",
+      "其他"
+     ]
+    },
+    {
+     "key": "occurDate",
+     "label": "发生时间",
+     "type": "datetime",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "location",
+     "label": "发生地点",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "dept",
+     "label": "责任部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "persons",
+     "label": "涉及人员",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "injuryPart",
+     "label": "受伤部位",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "showWhen": {
+      "key": "level1",
+      "in": [
+       "急救箱事件",
+       "医疗处置事件",
+       "一般事故"
+      ]
+     }
+    },
+    {
+     "key": "loss",
+     "label": "直接经济损失(元)",
+     "type": "number",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "lossDays",
+     "label": "损失工日",
+     "type": "number",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "showWhen": {
+      "key": "level1",
+      "in": [
+       "医疗处置事件",
+       "一般事件",
+       "一般事故",
+       "急救箱事件"
+      ]
+     }
+    },
+    {
+     "key": "medicalCost",
+     "label": "医疗费用(元)",
+     "type": "number",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "急救箱事件指医疗费用 1500 元以下",
+     "form": true,
+     "showWhen": {
+      "key": "level1",
+      "in": [
+       "急救箱事件",
+       "医疗处置事件"
+      ]
+     }
+    },
+    {
+     "key": "cause",
+     "label": "直接原因",
+     "type": "textarea",
+     "required": true,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "rootCause",
+     "label": "根本原因",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "管理 / 制度 / 培训层面",
+     "form": true
+    },
+    {
+     "key": "measures",
+     "label": "纠正预防措施",
+     "type": "textarea",
+     "required": true,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "status",
+     "label": "处理状态",
+     "type": "select",
+     "required": true,
+     "default": "调查中",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "调查中",
+      "整改中",
+      "已结案"
+     ]
+    },
+    {
+     "key": "reportDate",
+     "label": "上报日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "closeDate",
+     "label": "结案日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "reporter",
+     "label": "报告人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "转入整改",
+     "from": [
+      "调查中"
+     ],
+     "to": "整改中"
+    },
+    {
+     "action": "结案",
+     "from": [
+      "调查中",
+      "整改中"
+     ],
+     "to": "已结案",
+     "requires": [
+      "closeDate"
+     ]
+    },
+    {
+     "action": "重新调查",
+     "from": [
+      "已结案"
+     ],
+     "to": "调查中",
+     "set": {
+      "closeDate": ""
+     }
+    }
+   ]
+  },
+  {
+   "key": "trainings",
+   "label": "教育培训",
+   "short": "培训",
+   "prefix": "PX",
+   "icon": "✎",
+   "desc": "三级教育、专项培训、复训与考核记录",
+   "statusField": "status",
+   "defaultStatus": "计划中",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "title",
+     "label": "培训主题",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 220,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "type",
+     "label": "培训类型",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true,
+     "options": [
+      "三级教育",
+      "日常培训",
+      "专项培训",
+      "复训",
+      "应急演练培训",
+      "外来人员教育"
+     ]
+    },
+    {
+     "key": "target",
+     "label": "培训对象",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "dept",
+     "label": "组织部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "trainDate",
+     "label": "培训日期",
+     "type": "date",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "hours",
+     "label": "学时",
+     "type": "number",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 80,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "trainer",
+     "label": "讲师",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "place",
+     "label": "培训地点",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "method",
+     "label": "培训方式",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "集中授课",
+      "现场实操",
+      "线上学习",
+      "会议宣贯",
+      "其他"
+     ]
+    },
+    {
+     "key": "attendees",
+     "label": "参训人数",
+     "type": "number",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "passRate",
+     "label": "考核通过率(%)",
+     "type": "number",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "0–100，未考核可留空",
+     "form": true
+    },
+    {
+     "key": "status",
+     "label": "状态",
+     "type": "select",
+     "required": true,
+     "default": "计划中",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true,
+     "options": [
+      "计划中",
+      "已完成",
+      "已取消"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "标记完成",
+     "from": [
+      "计划中"
+     ],
+     "to": "已完成"
+    },
+    {
+     "action": "取消培训",
+     "from": [
+      "计划中"
+     ],
+     "to": "已取消"
+    },
+    {
+     "action": "恢复计划",
+     "from": [
+      "已完成",
+      "已取消"
+     ],
+     "to": "计划中"
+    }
+   ]
+  },
+  {
+   "key": "certificates",
+   "label": "人员资质证照",
+   "short": "证照",
+   "prefix": "ZZ",
+   "icon": "🪪",
+   "desc": "特种作业证与资格证台账、到期自动提醒",
+   "statusField": "status",
+   "defaultStatus": "有效",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "personName",
+     "label": "姓名",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "empNo",
+     "label": "工号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "dept",
+     "label": "所属部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "certType",
+     "label": "证书类型",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 170,
+     "help": "",
+     "form": true,
+     "options": [
+      "特种作业操作证",
+      "安全生产管理人员资格证",
+      "特种设备作业证",
+      "消防设施操作员证",
+      "职业健康培训证",
+      "其他"
+     ]
+    },
+    {
+     "key": "certNo",
+     "label": "证书编号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "issuer",
+     "label": "发证机关",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "issueDate",
+     "label": "发证日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "expireDate",
+     "label": "到期日期",
+     "type": "date",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "daysLeft",
+     "label": "剩余天数",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": false,
+     "compute": "cert_days_left"
+    },
+    {
+     "key": "expiryWarn",
+     "label": "到期提醒",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": false,
+     "compute": "cert_warn"
+    },
+    {
+     "key": "status",
+     "label": "状态",
+     "type": "select",
+     "required": true,
+     "default": "有效",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true,
+     "options": [
+      "有效",
+      "已注销"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "注销",
+     "from": [
+      "有效"
+     ],
+     "to": "已注销"
+    },
+    {
+     "action": "恢复有效",
+     "from": [
+      "已注销"
+     ],
+     "to": "有效"
+    }
+   ]
+  },
+  {
+   "key": "fireEquipments",
+   "label": "消防设施器材",
+   "short": "消防设施",
+   "prefix": "XF",
+   "icon": "🧯",
+   "desc": "灭火器、消火栓等设施台账与点检周期管理",
+   "statusField": "status",
+   "defaultStatus": "正常",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "name",
+     "label": "设施名称",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 180,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "type",
+     "label": "设施类型",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true,
+     "options": [
+      "灭火器",
+      "消火栓",
+      "自动喷淋",
+      "火灾报警",
+      "应急照明",
+      "疏散指示",
+      "防排烟",
+      "防火门",
+      "消防泵",
+      "其他"
+     ]
+    },
+    {
+     "key": "location",
+     "label": "安装位置",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 170,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "model",
+     "label": "规格型号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 130,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "quantity",
+     "label": "数量",
+     "type": "number",
+     "required": true,
+     "default": 1,
+     "in_list": true,
+     "width": 80,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "checkCycle",
+     "label": "点检周期",
+     "type": "select",
+     "required": true,
+     "default": "每月",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "每月",
+      "每季",
+      "每半年",
+      "每年"
+     ]
+    },
+    {
+     "key": "lastCheckDate",
+     "label": "最近点检日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "nextCheckDate",
+     "label": "下次点检日期",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": false,
+     "compute": "fire_next_check"
+    },
+    {
+     "key": "checkResult",
+     "label": "点检结果",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "",
+      "正常",
+      "异常",
+      "待维修"
+     ]
+    },
+    {
+     "key": "checkOverdue",
+     "label": "点检逾期",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": false,
+     "compute": "fire_overdue"
+    },
+    {
+     "key": "responsible",
+     "label": "责任人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "status",
+     "label": "设施状态",
+     "type": "select",
+     "required": true,
+     "default": "正常",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "正常",
+      "待维修",
+      "已停用",
+      "已报废"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "标记待维修",
+     "from": [
+      "正常"
+     ],
+     "to": "待维修"
+    },
+    {
+     "action": "维修完成",
+     "from": [
+      "待维修"
+     ],
+     "to": "正常"
+    },
+    {
+     "action": "停用",
+     "from": [
+      "正常",
+      "待维修"
+     ],
+     "to": "已停用"
+    },
+    {
+     "action": "恢复使用",
+     "from": [
+      "已停用"
+     ],
+     "to": "正常"
+    },
+    {
+     "action": "报废",
+     "from": [
+      "正常",
+      "待维修",
+      "已停用"
+     ],
+     "to": "已报废"
+    }
+   ]
+  },
+  {
+   "key": "fireDrills",
+   "label": "应急演练",
+   "short": "演练",
+   "prefix": "YL",
+   "icon": "🚨",
+   "desc": "演练计划、实施记录、评估与改进措施",
+   "statusField": "status",
+   "defaultStatus": "计划中",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "title",
+     "label": "演练名称",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 220,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "type",
+     "label": "演练类型",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true,
+     "options": [
+      "综合演练",
+      "专项演练",
+      "桌面推演",
+      "现场处置方案演练"
+     ]
+    },
+    {
+     "key": "plan",
+     "label": "对应预案",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 160,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "planDate",
+     "label": "计划日期",
+     "type": "date",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "actualDate",
+     "label": "实际日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "dept",
+     "label": "组织部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "location",
+     "label": "演练地点",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "commander",
+     "label": "总指挥",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "participants",
+     "label": "参演人数",
+     "type": "number",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "duration",
+     "label": "时长(分钟)",
+     "type": "number",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "conclusion",
+     "label": "演练评估",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "problems",
+     "label": "发现问题",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "improvements",
+     "label": "改进措施",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "status",
+     "label": "状态",
+     "type": "select",
+     "required": true,
+     "default": "计划中",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "计划中",
+      "已实施",
+      "已评估",
+      "已关闭"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "开始实施",
+     "from": [
+      "计划中"
+     ],
+     "to": "已实施",
+     "requires": [
+      "actualDate"
+     ]
+    },
+    {
+     "action": "完成评估",
+     "from": [
+      "已实施"
+     ],
+     "to": "已评估",
+     "requires": [
+      "conclusion"
+     ]
+    },
+    {
+     "action": "关闭",
+     "from": [
+      "已评估"
+     ],
+     "to": "已关闭"
+    },
+    {
+     "action": "重新计划",
+     "from": [
+      "已实施",
+      "已评估",
+      "已关闭"
+     ],
+     "to": "计划中"
+    }
+   ]
+  },
+  {
+   "key": "contractors",
+   "label": "承包商管理",
+   "short": "承包商",
+   "prefix": "CBS",
+   "icon": "🏗",
+   "desc": "相关方准入审核、资质有效期与违章记录",
+   "statusField": "status",
+   "defaultStatus": "待审核",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "name",
+     "label": "单位名称",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 220,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "type",
+     "label": "业务类型",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true,
+     "options": [
+      "工程施工",
+      "设备检修",
+      "运输物流",
+      "保洁绿化",
+      "设备安装",
+      "劳务分包",
+      "其他"
+     ]
+    },
+    {
+     "key": "contact",
+     "label": "联系人",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "phone",
+     "label": "联系电话",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "license",
+     "label": "营业执照号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 170,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "qualification",
+     "label": "资质等级/范围",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "safetyAgreement",
+     "label": "安全协议",
+     "type": "select",
+     "required": true,
+     "default": "未签订",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "已签订",
+      "未签订",
+      "不适用"
+     ]
+    },
+    {
+     "key": "insurance",
+     "label": "保险情况",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "entryDate",
+     "label": "准入日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "expireDate",
+     "label": "资质有效期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "expiryWarn",
+     "label": "到期提醒",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": false,
+     "compute": "contractor_expire_warn"
+    },
+    {
+     "key": "status",
+     "label": "准入状态",
+     "type": "select",
+     "required": true,
+     "default": "待审核",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "已准入",
+      "待审核",
+      "已暂停",
+      "已清退"
+     ]
+    },
+    {
+     "key": "violationCount",
+     "label": "违章次数",
+     "type": "number",
+     "required": false,
+     "default": 0,
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "lastEval",
+     "label": "最近评价",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "",
+      "优秀",
+      "良好",
+      "合格",
+      "不合格"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "审核通过",
+     "from": [
+      "待审核"
+     ],
+     "to": "已准入"
+    },
+    {
+     "action": "暂停作业",
+     "from": [
+      "已准入"
+     ],
+     "to": "已暂停"
+    },
+    {
+     "action": "恢复作业",
+     "from": [
+      "已暂停"
+     ],
+     "to": "已准入"
+    },
+    {
+     "action": "清退",
+     "from": [
+      "已准入",
+      "已暂停",
+      "待审核"
+     ],
+     "to": "已清退"
+    }
+   ]
+  },
+  {
+   "key": "permits",
+   "label": "作业许可票",
+   "short": "作业票",
+   "prefix": "ZY",
+   "icon": "📋",
+   "desc": "八大作业票办理、监护人、安全措施与时效跟踪",
+   "statusField": "status",
+   "defaultStatus": "待审批",
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "type",
+     "label": "作业类型",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "",
+     "form": true,
+     "options": [
+      "动火作业",
+      "受限空间作业",
+      "高处作业",
+      "吊装作业",
+      "临时用电",
+      "动土作业",
+      "断路作业",
+      "盲板抽堵",
+      "检修作业"
+     ]
+    },
+    {
+     "key": "level",
+     "label": "作业级别",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true,
+     "options": [
+      "一级",
+      "二级",
+      "三级",
+      "特殊"
+     ]
+    },
+    {
+     "key": "contractor",
+     "label": "施工单位",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 180,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "applicant",
+     "label": "申请人",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "dept",
+     "label": "申请部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "location",
+     "label": "作业地点",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "startTime",
+     "label": "开始时间",
+     "type": "datetime",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "endTime",
+     "label": "结束时间",
+     "type": "datetime",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "content",
+     "label": "作业内容",
+     "type": "textarea",
+     "required": true,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "safetyMeasures",
+     "label": "安全措施",
+     "type": "textarea",
+     "required": true,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "guardian",
+     "label": "监护人",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "approver",
+     "label": "审批人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "state",
+     "label": "时效",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": false,
+     "compute": "permit_state"
+    },
+    {
+     "key": "status",
+     "label": "状态",
+     "type": "select",
+     "required": true,
+     "default": "待审批",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "待审批",
+      "已批准",
+      "作业中",
+      "已完工",
+      "已关闭",
+      "已作废"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "批准",
+     "from": [
+      "待审批"
+     ],
+     "to": "已批准",
+     "requires": [
+      "approver"
+     ]
+    },
+    {
+     "action": "开始作业",
+     "from": [
+      "已批准"
+     ],
+     "to": "作业中"
+    },
+    {
+     "action": "完工",
+     "from": [
+      "作业中"
+     ],
+     "to": "已完工"
+    },
+    {
+     "action": "关闭",
+     "from": [
+      "已完工"
+     ],
+     "to": "已关闭"
+    },
+    {
+     "action": "作废",
+     "from": [
+      "待审批",
+      "已批准"
+     ],
+     "to": "已作废"
+    }
+   ]
+  },
+  {
+   "key": "equipments",
+   "label": "设备管理",
+   "short": "设备",
+   "prefix": "SB",
+   "icon": "⚙",
+   "desc": "特种设备（吊车/叉车/电梯/储气罐）、表阀（压力表/安全阀/流量计）及其他设备台账与检验到期管理",
+   "statusField": "status",
+   "defaultStatus": "在用",
+   "groupField": "category",
+   "groups": [
+    "特种设备类",
+    "表阀类",
+    "其他类"
+   ],
+   "computedMap": {
+    "category": {
+     "source": "type",
+     "map": {
+      "吊车": "特种设备类",
+      "叉车": "特种设备类",
+      "电梯": "特种设备类",
+      "储气罐": "特种设备类",
+      "锅炉": "特种设备类",
+      "压力容器": "特种设备类",
+      "起重机械": "特种设备类",
+      "气包压力表": "表阀类",
+      "气罐压力表": "表阀类",
+      "安全阀": "表阀类",
+      "流量计": "表阀类"
+     },
+     "default": "其他类"
+    }
+   },
+   "fields": [
+    {
+     "key": "id",
+     "label": "编号",
+     "type": "id",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "系统自动生成，不可修改",
+     "form": false
+    },
+    {
+     "key": "type",
+     "label": "设备类型",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "选择类型后会自动归入对应大类",
+     "form": true,
+     "options": [
+      "吊车",
+      "叉车",
+      "电梯",
+      "储气罐",
+      "锅炉",
+      "压力容器",
+      "起重机械",
+      "气包压力表",
+      "气罐压力表",
+      "安全阀",
+      "流量计",
+      "其他设备"
+     ]
+    },
+    {
+     "key": "category",
+     "label": "设备大类",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": false,
+     "compute": "equipment_category"
+    },
+    {
+     "key": "name",
+     "label": "设备名称",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "code",
+     "label": "设备编号/铭牌号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "设备铭牌上的出厂编号或单位内部编号",
+     "form": true
+    },
+    {
+     "key": "model",
+     "label": "规格型号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 140,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "location",
+     "label": "安装位置",
+     "type": "text",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 150,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "dept",
+     "label": "使用部门",
+     "type": "select",
+     "required": true,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "options": [
+      "安全环保部",
+      "生产部",
+      "设备部",
+      "技术部",
+      "仓储物流部",
+      "行政后勤部",
+      "质检部",
+      "工程部",
+      "采购部",
+      "财务部",
+      "人力资源部",
+      "其他"
+     ]
+    },
+    {
+     "key": "responsible",
+     "label": "责任人",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "regCode",
+     "label": "使用登记证号",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 170,
+     "help": "特种设备须办理使用登记，如「梯 1100001234」",
+     "form": true,
+     "showWhen": {
+      "key": "category",
+      "in": [
+       "特种设备类"
+      ]
+     }
+    },
+    {
+     "key": "ratedLoad",
+     "label": "额定载荷",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "如 5t、3t",
+     "form": true,
+     "showWhen": {
+      "key": "type",
+      "in": [
+       "吊车",
+       "叉车",
+       "起重机械"
+      ]
+     }
+    },
+    {
+     "key": "ratedSpeed",
+     "label": "额定速度",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "如 1.75 m/s",
+     "form": true,
+     "showWhen": {
+      "key": "type",
+      "in": [
+       "电梯"
+      ]
+     }
+    },
+    {
+     "key": "capacity",
+     "label": "容积/容量",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "如 2 m³",
+     "form": true,
+     "showWhen": {
+      "key": "type",
+      "in": [
+       "储气罐",
+       "压力容器"
+      ]
+     }
+    },
+    {
+     "key": "pressure",
+     "label": "工作压力",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "如 0.8 MPa",
+     "form": true,
+     "showWhen": {
+      "key": "type",
+      "in": [
+       "储气罐",
+       "压力容器",
+       "气包压力表",
+       "气罐压力表",
+       "安全阀"
+      ]
+     }
+    },
+    {
+     "key": "nextInspectDate",
+     "label": "下次定期检验",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 130,
+     "help": "特种设备定期检验的到期日",
+     "form": true,
+     "showWhen": {
+      "key": "category",
+      "in": [
+       "特种设备类"
+      ]
+     }
+    },
+    {
+     "key": "range",
+     "label": "量程",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "如 0–1.6 MPa",
+     "form": true,
+     "showWhen": {
+      "key": "type",
+      "in": [
+       "气包压力表",
+       "气罐压力表",
+       "流量计"
+      ]
+     }
+    },
+    {
+     "key": "accuracy",
+     "label": "精度等级",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "如 1.6 级",
+     "form": true,
+     "showWhen": {
+      "key": "type",
+      "in": [
+       "气包压力表",
+       "气罐压力表"
+      ]
+     }
+    },
+    {
+     "key": "calibCycle",
+     "label": "校验周期",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "压力表一般每半年校验一次",
+     "form": true,
+     "options": [
+      "每半年",
+      "每年",
+      "每两年",
+      "每三年"
+     ],
+     "showWhen": {
+      "key": "category",
+      "in": [
+       "表阀类"
+      ]
+     }
+    },
+    {
+     "key": "calibDate",
+     "label": "最近校验日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": true,
+     "showWhen": {
+      "key": "category",
+      "in": [
+       "表阀类"
+      ]
+     }
+    },
+    {
+     "key": "calibNext",
+     "label": "下次校验日期",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "",
+     "form": false,
+     "compute": "equipment_next_check"
+    },
+    {
+     "key": "calibResult",
+     "label": "校验结果",
+     "type": "select",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "",
+      "合格",
+      "不合格",
+      "待校验"
+     ],
+     "showWhen": {
+      "key": "category",
+      "in": [
+       "表阀类"
+      ]
+     }
+    },
+    {
+     "key": "manufacturer",
+     "label": "制造单位",
+     "type": "text",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 160,
+     "help": "",
+     "form": true,
+     "showWhen": {
+      "key": "category",
+      "in": [
+       "其他类"
+      ]
+     }
+    },
+    {
+     "key": "installDate",
+     "label": "投用日期",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": true,
+     "showWhen": {
+      "key": "category",
+      "in": [
+       "其他类"
+      ]
+     }
+    },
+    {
+     "key": "inspectExpire",
+     "label": "检验有效期至",
+     "type": "date",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 120,
+     "help": "下次外部检验/校验的到期日，逾期会在看板提醒",
+     "form": true
+    },
+    {
+     "key": "daysLeft",
+     "label": "剩余天数",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 90,
+     "help": "",
+     "form": false,
+     "compute": "equipment_days_left"
+    },
+    {
+     "key": "expiryWarn",
+     "label": "到期提醒",
+     "type": "computed",
+     "required": false,
+     "default": "",
+     "in_list": true,
+     "width": 110,
+     "help": "",
+     "form": false,
+     "compute": "equipment_expire_warn"
+    },
+    {
+     "key": "status",
+     "label": "设备状态",
+     "type": "select",
+     "required": true,
+     "default": "在用",
+     "in_list": true,
+     "width": 100,
+     "help": "",
+     "form": true,
+     "options": [
+      "在用",
+      "备用",
+      "停用",
+      "维修中",
+      "已报废"
+     ]
+    },
+    {
+     "key": "remark",
+     "label": "备注",
+     "type": "textarea",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 200,
+     "help": "",
+     "form": true
+    },
+    {
+     "key": "createdAt",
+     "label": "创建时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    },
+    {
+     "key": "updatedAt",
+     "label": "更新时间",
+     "type": "datetime",
+     "required": false,
+     "default": "",
+     "in_list": false,
+     "width": 140,
+     "help": "",
+     "form": false
+    }
+   ],
+   "transitions": [
+    {
+     "action": "转备用",
+     "from": [
+      "在用"
+     ],
+     "to": "备用"
+    },
+    {
+     "action": "启用",
+     "from": [
+      "备用",
+      "停用"
+     ],
+     "to": "在用"
+    },
+    {
+     "action": "停用",
+     "from": [
+      "在用",
+      "备用",
+      "维修中"
+     ],
+     "to": "停用"
+    },
+    {
+     "action": "报修",
+     "from": [
+      "在用",
+      "备用"
+     ],
+     "to": "维修中"
+    },
+    {
+     "action": "维修完成",
+     "from": [
+      "维修中"
+     ],
+     "to": "在用"
+    },
+    {
+     "action": "报废",
+     "from": [
+      "在用",
+      "备用",
+      "停用",
+      "维修中"
+     ],
+     "to": "已报废"
+    }
+   ]
+  }
+ ],
+ "dicts": {
+  "departments": [
+   "安全环保部",
+   "生产部",
+   "设备部",
+   "技术部",
+   "仓储物流部",
+   "行政后勤部",
+   "质检部",
+   "工程部",
+   "采购部",
+   "财务部",
+   "人力资源部",
+   "其他"
+  ]
+ }
+}

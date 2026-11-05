@@ -279,13 +279,17 @@ async function main() {
     });
 
     console.log('\n[6] 数据管理面板');
-    await check('侧栏有「数据管理」按钮', async () => {
-      const has = await cdp.eval('!!document.getElementById("btnStaticData")');
-      assert(has, '缺少数据管理按钮');
+    await check('「数据管理」按钮存在', async () => {
+      const info = await cdp.eval(`(() => {
+        const b = document.getElementById('btnDataInfo');
+        return { exists: !!b, text: b ? b.textContent.trim() : '' };
+      })()`);
+      assert(info.exists, '缺少按钮');
+      assert(info.text === '数据管理', '按钮文字: ' + info.text);
     });
 
     await check('数据管理面板能打开', async () => {
-      await cdp.eval(`document.getElementById('btnStaticData').click()`);
+      await cdp.eval(`document.getElementById('btnDataInfo').click()`);
       await sleep(700);
       const info = await cdp.eval(`(() => {
         const m = document.querySelector('.modal');
@@ -308,6 +312,181 @@ async function main() {
     await check('关闭面板', async () => {
       await cdp.eval(`document.querySelector('.modal-head .x').click()`);
       await sleep(400);
+    });
+
+    console.log('\n[6b] Excel 功能');
+    await check('XLSX 模块已加载', async () => {
+      const info = await cdp.eval(`(() => ({
+        hasXLSX: !!window.XLSX,
+        hasBuild: !!(window.XLSX && window.XLSX.build),
+        hasRead: !!(window.XLSX && window.XLSX.read),
+        hasBiz: !!window.Biz,
+      }))()`);
+      assert(info.hasXLSX, 'XLSX 未加载');
+      assert(info.hasBuild && info.hasRead, 'XLSX 方法缺失');
+      assert(info.hasBiz, 'Biz 未加载');
+    });
+
+    await check('能生成有效 xlsx 字节', async () => {
+      const info = await cdp.eval(`(async () => {
+        const bytes = window.XLSX.build([{
+          name: '测试',
+          rows: [['编号', '名称'], ['A-001', '测试项']],
+        }]);
+        // xlsx 是 zip，开头应为 PK
+        const isZip = bytes[0] === 0x50 && bytes[1] === 0x4B;
+        return { size: bytes.length, isZip };
+      })()`);
+      assert(info.isZip, '不是有效的 ZIP/xlsx');
+      assert(info.size > 300, '文件过小: ' + info.size);
+      console.log(`       生成 ${info.size} 字节`);
+    });
+
+    await check('能读回自己生成的 xlsx', async () => {
+      const info = await cdp.eval(`(async () => {
+        const bytes = window.XLSX.build([{
+          name: '测试',
+          rows: [['编号', '名称'], ['A-001', '测试项'], ['A-002', '第二项']],
+        }]);
+        const sheets = await window.XLSX.read(bytes);
+        return {
+          count: sheets.length,
+          name: sheets[0] ? sheets[0].name : '',
+          rows: sheets[0] ? sheets[0].rows : [],
+        };
+      })()`);
+      assert(info.count >= 1, '未读到工作表');
+      assert(info.rows.length === 3, '行数: ' + info.rows.length);
+      assert(info.rows[0][0] === '编号', '表头错误: ' + info.rows[0][0]);
+      assert(info.rows[1][1] === '测试项', '数据错误: ' + info.rows[1][1]);
+      console.log(`       读回 ${info.rows.length} 行`);
+    });
+
+    await check('导入能按编号 upsert', async () => {
+      const info = await cdp.eval(`(async () => {
+        const L = window.LocalAPI;
+        const coll = L.getSchema().collections.find(c => c.key === 'hazards');
+        const t = new Date().toISOString().slice(0, 10);
+        const fut = new Date(Date.now() + 15*86400000).toISOString().slice(0, 10);
+        // 提供全部必填字段
+        const bytes = window.XLSX.build([{
+          name: '隐患',
+          rows: [
+            ['编号', '隐患描述', '隐患类别', '隐患等级', '发现来源',
+             '发现日期', '责任部门', '整改责任人', '整改期限'],
+            ['', 'Excel导入测试-新增记录', '电气安全', '一般隐患', '日常巡检',
+             t, '生产部', '测试员', fut],
+          ],
+        }]);
+        const file = new File([bytes], 'test.xlsx',
+          { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const before = L.all('hazards').length;
+        const r = await window.Biz.importCollection(file, 'hazards', coll, L);
+        const after = L.all('hazards').length;
+        return { before, after, inserted: r.inserted, skipped: r.skipped,
+                 errors: r.errors.slice(0, 2) };
+      })()`);
+      assert(info.inserted === 1, '应新增1条，实际: ' + JSON.stringify(info));
+      assert(info.after === info.before + 1, '数量未增加');
+      console.log(`       ${info.before} → ${info.after} 条`);
+    });
+
+    await check('导入缺少必填项会被拒绝', async () => {
+      const info = await cdp.eval(`(async () => {
+        const L = window.LocalAPI;
+        const coll = L.getSchema().collections.find(c => c.key === 'hazards');
+        // 只给两列，缺必填
+        const bytes = window.XLSX.build([{
+          name: '隐患',
+          rows: [['编号', '隐患描述'], ['', '缺必填的测试']],
+        }]);
+        const file = new File([bytes], 'bad.xlsx',
+          { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const r = await window.Biz.importCollection(file, 'hazards', coll, L);
+        return { inserted: r.inserted, skipped: r.skipped, hasError: r.errors.length > 0 };
+      })()`);
+      assert(info.inserted === 0, '缺必填不应新增');
+      assert(info.skipped === 1, '应跳过1条');
+      assert(info.hasError, '应有错误提示');
+    });
+
+    await check('导入数据可查询到', async () => {
+      const found = await cdp.eval(`(() => {
+        return window.LocalAPI.all('hazards')
+          .some(h => String(h.title || '').indexOf('Excel导入测试') >= 0);
+      })()`);
+      assert(found, '导入的记录查不到');
+    });
+
+    await check('导出集合能生成 xlsx', async () => {
+      const info = await cdp.eval(`(() => {
+        const L = window.LocalAPI;
+        const coll = L.getSchema().collections.find(c => c.key === 'hazards');
+        const items = L.all('hazards').slice(0, 3);
+        // 直接调 build 验证不抛错（download 会触发下载，这里只测构建）
+        const fields = (coll.fields || []).filter(f => f.type !== 'computed');
+        const rows = [fields.map(f => f.label)];
+        items.forEach(it => rows.push(fields.map(f => {
+          const v = it[f.key];
+          return v === null || v === undefined ? '' : (typeof v === 'number' ? v : String(v));
+        })));
+        const bytes = window.XLSX.build([{ name: '隐患', rows }]);
+        return { size: bytes.length, isZip: bytes[0] === 0x50 };
+      })()`);
+      assert(info.isZip, '不是 xlsx');
+      assert(info.size > 500, '文件过小');
+      console.log(`       导出 ${info.size} 字节`);
+    });
+
+    console.log('\n[6c] HTML 报表');
+    await check('报表生成函数可用', async () => {
+      const has = await cdp.eval('!!(window.Biz && window.Biz.buildReport)');
+      assert(has, '缺少 buildReport');
+    });
+
+    await check('报表包含完整结构', async () => {
+      const info = await cdp.eval(`(async () => {
+        const L = window.LocalAPI;
+        const d = await L.dashboard('', '', '');
+        const html = window.Biz.buildReport(d, L.getSchema(), k => L.all(k));
+        return {
+          len: html.length,
+          isHtml: html.indexOf('<!DOCTYPE html>') === 0,
+          hasTitle: html.includes('安全管理数据报表'),
+          hasKpi: html.includes('核心指标'),
+          hasCharts: html.includes('数据分析'),
+          hasAlerts: html.includes('待办提醒'),
+          hasTables: html.includes('台账明细'),
+          svgCount: (html.match(/<svg/g) || []).length,
+          tableCount: (html.match(/<table/g) || []).length,
+          noExternal: !/<script[^>]+src=["']https?:/.test(html) &&
+                       !/<link[^>]+href=["']https?:/.test(html),
+        };
+      })()`);
+      assert(info.isHtml, '不是完整 HTML');
+      assert(info.hasTitle && info.hasKpi && info.hasCharts, '结构不全');
+      assert(info.hasAlerts && info.hasTables, '缺少提醒或台账');
+      assert(info.svgCount >= 6, '图表数: ' + info.svgCount);
+      assert(info.tableCount >= 11, '表格数: ' + info.tableCount);
+      assert(info.noExternal, '存在外部资源依赖');
+      console.log(`       ${Math.round(info.len/1024)} KB, ${info.svgCount} 图表, ${info.tableCount} 表格`);
+    });
+
+    console.log('\n[6d] 清理 Excel 测试数据');
+    await check('删除导入的测试记录', async () => {
+      const n = await cdp.eval(`(() => {
+        const L = window.LocalAPI;
+        let n = 0;
+        L.all('hazards').forEach(h => {
+          if (String(h.title || '').indexOf('Excel导入测试') >= 0) {
+            L.remove('hazards', h.id);
+            n++;
+          }
+        });
+        return n;
+      })()`);
+      assert(n >= 1, '未删除记录');
+      console.log(`       删除 ${n} 条`);
     });
 
     console.log('\n[7] 状态流转');
