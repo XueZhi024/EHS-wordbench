@@ -1485,10 +1485,22 @@
   function applyStaticUI() {
     if (RUN_MODE !== 'static') return;
 
-    // 顶栏显示「本地存储」标记
-    const sub = $('#pageSub');
-    if (sub && !sub.textContent.includes('本地存储')) {
-      sub.textContent = sub.textContent + '　·　数据存于本浏览器';
+    // 顶栏右上角加一个固定的「本地存储」徽标（不会被路由覆盖）
+    const topbar = document.querySelector('.topbar');
+    if (topbar && !document.getElementById('staticBadge')) {
+      const badge = el('span', {
+        id: 'staticBadge',
+        class: 'badge gray',
+        style: 'margin-right:8px;font-size:11.5px',
+        title: '数据保存在当前浏览器，不会上传到服务器',
+        text: '数据存于本浏览器',
+      });
+      const spacer = topbar.querySelector('.spacer');
+      if (spacer && spacer.nextSibling) {
+        topbar.insertBefore(badge, spacer.nextSibling);
+      } else {
+        topbar.appendChild(badge);
+      }
     }
 
     // 隐藏「备份全部数据」（静态模式下用「数据管理」里的导出）
